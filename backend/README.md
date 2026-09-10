@@ -1,8 +1,10 @@
 # 2kitchen backend
 
+**Live:** [twokitchen-backend.onrender.com](https://twokitchen-backend.onrender.com/restaurants)
+
 Backend for 2kitchen, a small multi-tenant restaurant ordering app. Anyone can sign up, register their own restaurant, fill it with dishes, and get an admin panel with order stats. Customers browse restaurants and place orders without needing an account.
 
-Frontend: [2kitchen_frontend](https://github.com/pavloveone/2kitchen_frontend)
+Frontend: [../frontend](../frontend)
 
 ## Stack
 
@@ -10,7 +12,7 @@ Go, Fiber, PostgreSQL (pgx), JWT, Docker
 
 ## How it's structured
 
-A restaurant belongs to exactly one account. Dishes and orders belong to a restaurant and get deleted along with it. Browsing a menu and placing an order doesn't require logging in — auth is only needed for managing your own restaurant (adding dishes, checking orders, editing or deleting the restaurant). The backend resolves "which restaurant is this request for" from the JWT itself rather than trusting whatever id the client sends, so one account can't touch another account's data by fiddling with request bodies.
+A restaurant belongs to exactly one account. Dishes and orders belong to a restaurant and get deleted along with it. Browsing a menu and placing an order doesn't require logging in - auth is only needed for managing your own restaurant (adding dishes, checking orders, editing or deleting the restaurant). The backend resolves "which restaurant is this request for" from the JWT itself rather than trusting whatever id the client sends, so one account can't touch another account's data by fiddling with request bodies.
 
 There's also a `POST /orders/simulate` endpoint that fills a restaurant with a batch of randomized orders spread over the last month, mostly so the analytics tab has something to show before real customers show up.
 
@@ -64,7 +66,7 @@ TEST_DATABASE_URL=postgres://kitchen_user:kitchen_pass@localhost:5432/kitchen_te
 
 ## Deployment
 
-Set up for Render (`render.yaml`, free tier) with Postgres hosted on Neon rather than Render's own database. `DATABASE_URL` and `JWT_SECRET` are set as environment variables directly in Render — they're intentionally left out of `render.yaml` so nothing sensitive ends up committed.
+Set up for Render (`render.yaml` at the repo root, free tier) with Postgres hosted on Neon rather than Render's own database. `DATABASE_URL` and `JWT_SECRET` are set as environment variables directly in Render - they're intentionally left out of `render.yaml` so nothing sensitive ends up committed.
 
 ## Roadmap
 
