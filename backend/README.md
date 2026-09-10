@@ -82,5 +82,5 @@ Set up for Render (`render.yaml` at the repo root, free tier) with Postgres host
 
 ## Author
 
-Alexander Pavlov
+Aleksandr Pavlov
 [LinkedIn](https://linkedin.com/in/pavloveone)

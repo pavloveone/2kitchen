@@ -39,5 +39,5 @@ Needs the backend running on `:8080` (see [../backend](../backend)), or set `REA
 
 ## Author
 
-Alexander Pavlov
+Aleksandr Pavlov
 [LinkedIn](https://linkedin.com/in/pavloveone)

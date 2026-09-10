@@ -35,5 +35,5 @@ The frontend expects the API on `:8080` by default.
 
 ## Author
 
-Alexander Pavlov
+Aleksandr Pavlov
 [LinkedIn](https://linkedin.com/in/pavloveone)
