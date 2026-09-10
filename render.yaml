@@ -4,6 +4,7 @@ services:
     env: go
     region: frankfurt
     plan: free
+    rootDir: backend
     buildCommand: go build -o main ./cmd
     startCommand: ./main
     envVars:
