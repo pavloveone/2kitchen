@@ -51,7 +51,7 @@ export const HeaderMenu: FC = () => {
         >
           <ArrowBackIos />
         </IconButton>
-        <Typography variant="h6">Меню</Typography>
+        <Typography variant="h6">Menu</Typography>
       </Box>
 
       <Box sx={{ alignItems: 'center', display: 'flex', gap: '12px' }}>

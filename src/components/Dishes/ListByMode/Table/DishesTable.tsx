@@ -42,13 +42,13 @@ export const DishesTable: React.FC<DishesTableProps> = ({ dishes }) => {
                 onChange={handleSelectAll}
               />
             </TableCell>
-            <TableCell>Название</TableCell>
-            <TableCell>Описание</TableCell>
-            <TableCell align="right">Цена (₽)</TableCell>
-            <TableCell align="right">Белки</TableCell>
-            <TableCell align="right">Жиры</TableCell>
-            <TableCell align="right">Углеводы</TableCell>
-            <TableCell align="right">Калории</TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell>Description</TableCell>
+            <TableCell align="right">Price (€)</TableCell>
+            <TableCell align="right">Protein</TableCell>
+            <TableCell align="right">Fat</TableCell>
+            <TableCell align="right">Carbs</TableCell>
+            <TableCell align="right">Calories</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

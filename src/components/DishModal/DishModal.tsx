@@ -3,7 +3,7 @@ import { Modal, Box, Typography, IconButton, Portal } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { NutritionChips } from '../Dishes/NutritionChips';
 import { Dish } from '../../api';
-import { styles } from './DishModal.styles';
+import { styles } from './styles';
 
 interface DishModalProps {
   dish: Dish;
@@ -40,7 +40,7 @@ export const DishModal: FC<DishModalProps> = ({ dish, open, onClose }) => {
             </Typography>
 
             <Typography variant="h6" color="text.secondary" sx={styles.nutritionTitle}>
-              Пищевая ценность: {dish.calories} ккал
+              Nutrition facts: {dish.calories} kcal
             </Typography>
           </Box>
         </Box>

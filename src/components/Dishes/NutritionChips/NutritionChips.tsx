@@ -15,21 +15,21 @@ export const NutritionChips: FC<NutritionChipsProps> = ({ dish }) => (
     }}
   >
     <Chip
-      label={`Б ${dish.protein}`}
+      label={`P ${dish.protein}`}
       size="small"
       color="primary"
       variant="outlined"
       sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}
     />
     <Chip
-      label={`Ж ${dish.fat}`}
+      label={`F ${dish.fat}`}
       size="small"
       color="primary"
       variant="outlined"
       sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}
     />
     <Chip
-      label={`У ${dish.carbs}`}
+      label={`C ${dish.carbs}`}
       size="small"
       color="primary"
       variant="outlined"

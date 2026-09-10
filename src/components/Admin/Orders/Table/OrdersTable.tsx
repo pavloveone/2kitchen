@@ -13,7 +13,8 @@ import {
 } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import React, { useCallback, useState } from 'react';
-import { Order } from '../../../../api';
+import { Order, OrderItem } from '../../../../api';
+import { formatPrice } from '../../../../utils';
 
 type OrdersTableProps = {
   orders: Order[];
@@ -55,10 +56,7 @@ export const OrdersTable: React.FC<OrdersTableProps> = ({ orders }) => {
 
   const parseItems = (itemsStr: string) => {
     try {
-      return JSON.parse(itemsStr) as {
-        dish: { name: string; price: number };
-        quantity: number;
-      }[];
+      return JSON.parse(itemsStr) as OrderItem[];
     } catch {
       return [];
     }
@@ -77,10 +75,10 @@ export const OrdersTable: React.FC<OrdersTableProps> = ({ orders }) => {
               />
             </TableCell>
             <TableCell />
-            <TableCell>Номер заказа</TableCell>
-            <TableCell>Статус</TableCell>
-            <TableCell>Статус оплаты</TableCell>
-            <TableCell>Время оформления</TableCell>
+            <TableCell>Order #</TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell>Payment status</TableCell>
+            <TableCell>Placed at</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -111,21 +109,21 @@ export const OrdersTable: React.FC<OrdersTableProps> = ({ orders }) => {
                   <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={isOpen} timeout="auto" unmountOnExit>
                       <Box margin={1}>
-                        <strong>Состав заказа:</strong>
+                        <strong>Order items:</strong>
                         <Table size="small">
                           <TableHead>
                             <TableRow>
-                              <TableCell>Блюдо</TableCell>
-                              <TableCell>Количество</TableCell>
-                              <TableCell>Цена</TableCell>
+                              <TableCell>Dish</TableCell>
+                              <TableCell>Quantity</TableCell>
+                              <TableCell>Price</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {items.map((item, idx) => (
-                              <TableRow key={idx}>
+                            {items.map((item) => (
+                              <TableRow key={item.dish.id}>
                                 <TableCell>{item.dish.name}</TableCell>
                                 <TableCell>{item.quantity}</TableCell>
-                                <TableCell>{item.dish.price}₽</TableCell>
+                                <TableCell>{formatPrice(item.dish.price)}</TableCell>
                               </TableRow>
                             ))}
                           </TableBody>

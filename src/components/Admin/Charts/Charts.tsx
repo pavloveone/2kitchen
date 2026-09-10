@@ -21,8 +21,33 @@ type ChartsProps = {
   orders: Order[];
 };
 
-// Пастельная палитра
 const COLORS = ['#A0C4FF', '#BDB2FF', '#FFC6FF', '#FFD6A5', '#FDFFB6'];
+
+const ChartCard: React.FC<{ title: string; children: React.ReactElement }> = ({
+  title,
+  children,
+}) => (
+  <Box mb={4}>
+    <Paper sx={{ p: 2, height: 300 }}>
+      <Typography variant="subtitle2" gutterBottom>
+        {title}
+      </Typography>
+      <ResponsiveContainer width="100%" height="90%">
+        {children}
+      </ResponsiveContainer>
+    </Paper>
+  </Box>
+);
+
+const parseOrderTotal = (order: Order) => {
+  try {
+    const items = JSON.parse(order.items) as OrderItem[];
+    return items.reduce((sum, item) => sum + item.dish.price * item.quantity, 0);
+  } catch {
+    // malformed items payload - treat as an empty order rather than crashing the chart
+    return 0;
+  }
+};
 
 export const Charts: React.FC<ChartsProps> = ({ orders }) => {
   const ordersByDate = useMemo(() => {
@@ -46,16 +71,7 @@ export const Charts: React.FC<ChartsProps> = ({ orders }) => {
     const map: Record<string, number> = {};
     orders.forEach((order) => {
       const date = new Date(order.order_time).toISOString().split('T')[0];
-      let total = 0;
-      try {
-        const items = JSON.parse(order.items);
-        for (const item of items) {
-          total += item.dish.price * item.quantity;
-        }
-      } catch {
-        total = 0;
-      }
-      map[date] = (map[date] || 0) + total;
+      map[date] = (map[date] || 0) + parseOrderTotal(order);
     });
     return Object.entries(map).map(([date, revenue]) => ({ date, revenue }));
   }, [orders]);
@@ -64,12 +80,14 @@ export const Charts: React.FC<ChartsProps> = ({ orders }) => {
     const map: Record<string, number> = {};
     orders.forEach((order) => {
       try {
-        const items = JSON.parse(order.items);
-        items.forEach((item: OrderItem) => {
-          const name = item.dish.name;
+        const items = JSON.parse(order.items) as OrderItem[];
+        items.forEach((item) => {
+          const { name } = item.dish;
           map[name] = (map[name] || 0) + item.quantity;
         });
-      } catch {}
+      } catch {
+        // malformed items payload - skip this order
+      }
     });
     return Object.entries(map)
       .map(([name, count]) => ({ name, count }))
@@ -81,17 +99,8 @@ export const Charts: React.FC<ChartsProps> = ({ orders }) => {
     const map: Record<string, { total: number; count: number }> = {};
     orders.forEach((order) => {
       const date = new Date(order.order_time).toISOString().split('T')[0];
-      let total = 0;
-      try {
-        const items = JSON.parse(order.items);
-        for (const item of items) {
-          total += item.dish.price * item.quantity;
-        }
-      } catch {
-        total = 0;
-      }
       if (!map[date]) map[date] = { total: 0, count: 0 };
-      map[date].total += total;
+      map[date].total += parseOrderTotal(order);
       map[date].count += 1;
     });
     return Object.entries(map).map(([date, { total, count }]) => ({
@@ -103,11 +112,10 @@ export const Charts: React.FC<ChartsProps> = ({ orders }) => {
   return (
     <Box p={2} sx={{ height: '100%' }}>
       <Typography variant="h6" gutterBottom>
-        Аналитика заказов
+        Order analytics
       </Typography>
       <Box sx={{ height: '100%', overflow: 'auto' }}>
-        {/* Количество заказов по дням */}
-        <ChartCard title="Количество заказов по дням">
+        <ChartCard title="Orders per day">
           <LineChart data={ordersByDate}>
             <XAxis dataKey="date" tick={{ fontSize: 12 }} />
             <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
@@ -117,8 +125,7 @@ export const Charts: React.FC<ChartsProps> = ({ orders }) => {
           </LineChart>
         </ChartCard>
 
-        {/* Статусы заказов */}
-        <ChartCard title="Статусы заказов">
+        <ChartCard title="Order statuses">
           <PieChart>
             <Pie
               data={statusDistribution}
@@ -128,16 +135,15 @@ export const Charts: React.FC<ChartsProps> = ({ orders }) => {
               label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
               stroke="none"
             >
-              {statusDistribution.map((_, index) => (
-                <Cell key={index} fill={COLORS[index % COLORS.length]} />
+              {statusDistribution.map((entry, index) => (
+                <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
             <Tooltip />
           </PieChart>
         </ChartCard>
 
-        {/* Выручка по дням */}
-        <ChartCard title="Выручка по дням">
+        <ChartCard title="Revenue per day">
           <BarChart data={revenueByDate}>
             <CartesianGrid strokeDasharray="2 2" stroke="#ccc" />
             <XAxis dataKey="date" tick={{ fontSize: 12 }} />
@@ -147,8 +153,7 @@ export const Charts: React.FC<ChartsProps> = ({ orders }) => {
           </BarChart>
         </ChartCard>
 
-        {/* Топ-5 популярных блюд */}
-        <ChartCard title="Топ-5 популярных блюд">
+        <ChartCard title="Top 5 dishes">
           <BarChart data={topDishes}>
             <CartesianGrid strokeDasharray="2 2" stroke="#ccc" />
             <XAxis dataKey="name" tick={{ fontSize: 12 }} />
@@ -158,8 +163,7 @@ export const Charts: React.FC<ChartsProps> = ({ orders }) => {
           </BarChart>
         </ChartCard>
 
-        {/* Средний чек */}
-        <ChartCard title="Средний чек по дням">
+        <ChartCard title="Average order value per day">
           <LineChart data={avgReceiptByDate}>
             <XAxis dataKey="date" tick={{ fontSize: 12 }} />
             <YAxis tick={{ fontSize: 12 }} />
@@ -172,20 +176,3 @@ export const Charts: React.FC<ChartsProps> = ({ orders }) => {
     </Box>
   );
 };
-
-// Вспомогательный компонент для карточки графика
-const ChartCard: React.FC<{ title: string; children: React.ReactElement }> = ({
-  title,
-  children,
-}) => (
-  <Box mb={4}>
-    <Paper sx={{ p: 2, height: 300 }}>
-      <Typography variant="subtitle2" gutterBottom>
-        {title}
-      </Typography>
-      <ResponsiveContainer width="100%" height="90%">
-        {children}
-      </ResponsiveContainer>
-    </Paper>
-  </Box>
-);

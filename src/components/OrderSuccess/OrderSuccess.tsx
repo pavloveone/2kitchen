@@ -28,10 +28,10 @@ export const OrderSuccess: React.FC = () => {
         })}
       />
       <Typography variant="h5" fontWeight="bold" gutterBottom>
-        Заказ успешно оформлен!
+        Order placed successfully!
       </Typography>
       <Typography variant="body1" color="text.secondary" gutterBottom>
-        Спасибо за ваш заказ. Мы уже начали его готовить.
+        Thank you for your order. We&apos;ve already started preparing it.
       </Typography>
       <Box mt={4}>
         <Button
@@ -43,7 +43,7 @@ export const OrderSuccess: React.FC = () => {
           fullWidth
           sx={{ borderRadius: '10px' }}
         >
-          Вернуться на главную
+          Back to home
         </Button>
       </Box>
     </Container>

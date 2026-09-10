@@ -37,7 +37,7 @@ export const Cart: FC<CartProps> = ({ isMobile, onCheckout }) => {
           onClick={onCheckout}
           startIcon={<ShoppingCart />}
         >
-          Оформить ({formatPrice(total)})
+          Checkout ({formatPrice(total)})
         </Button>
       </Box>
     );
@@ -64,12 +64,12 @@ export const Cart: FC<CartProps> = ({ isMobile, onCheckout }) => {
         }}
       >
         <ShoppingCart sx={{ mr: 1 }} />
-        <Typography variant="h6">Ваш заказ</Typography>
+        <Typography variant="h6">Your order</Typography>
       </Box>
 
       {order.length === 0 ? (
         <Typography color="text.secondary" sx={{ textAlign: 'center', py: 4, flexGrow: 1 }}>
-          Корзина пуста
+          Cart is empty
         </Typography>
       ) : (
         <>
@@ -78,7 +78,7 @@ export const Cart: FC<CartProps> = ({ isMobile, onCheckout }) => {
           <Divider sx={{ my: 2 }} />
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-            <Typography variant="subtitle1">Итого:</Typography>
+            <Typography variant="subtitle1">Total:</Typography>
             <Typography variant="subtitle1">{formatPrice(total)}</Typography>
           </Box>
           <Button
@@ -89,7 +89,7 @@ export const Cart: FC<CartProps> = ({ isMobile, onCheckout }) => {
             sx={{ mt: 'auto', borderRadius: '10px' }}
             onClick={onCheckout}
           >
-            Оформить
+            Checkout
           </Button>
         </>
       )}
