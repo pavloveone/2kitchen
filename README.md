@@ -1,93 +1,81 @@
-# 2kitchen Backend
+# 2kitchen backend
 
-Backend service for **2kitchen** – a digital solution for restaurants. It allows guests to order dishes, call a waiter, or request a bill, while restaurants manage menus and monitor orders via an admin dashboard.
+Backend for 2kitchen, a small multi-tenant restaurant ordering app. Anyone can sign up, register their own restaurant, fill it with dishes, and get an admin panel with order stats. Customers browse restaurants and place orders without needing an account.
 
-🔗 Frontend: [2kitchen_frontend GitHub Repo](https://github.com/pavloveone/2kitchen_frontend)
+Frontend: [2kitchen_frontend](https://github.com/pavloveone/2kitchen_frontend)
 
----
+## Stack
 
-## 🛠 Technologies
+Go, Fiber, PostgreSQL (pgx), JWT, Docker
 
-Go, Fiber, PostgreSQL, Docker, jwt-go, testify, godotenv
+## How it's structured
 
----
+A restaurant belongs to exactly one account. Dishes and orders belong to a restaurant and get deleted along with it. Browsing a menu and placing an order doesn't require logging in — auth is only needed for managing your own restaurant (adding dishes, checking orders, editing or deleting the restaurant). The backend resolves "which restaurant is this request for" from the JWT itself rather than trusting whatever id the client sends, so one account can't touch another account's data by fiddling with request bodies.
 
-## 📦 API Overview
+There's also a `POST /orders/simulate` endpoint that fills a restaurant with a batch of randomized orders spread over the last month, mostly so the analytics tab has something to show before real customers show up.
 
-### 🍽 Dishes (`/dishes`)
-- `GET /dishes` – Get all dishes  
-- `GET /dishes/:restId` – Get dishes by restaurant  
-- `GET /dishes/:restId/:id` – Get dish by ID  
-- `POST /dishes` – Add a new dish  
-- `DELETE /dishes` – Remove a dish  
+## API
 
-### 🧾 Orders (`/orders`)
-- `GET /orders` – Get all orders  
-- `POST /orders` – Create an order  
+**Auth** (`/users`)
+- `POST /users` – register
+- `POST /users/login` – log in, returns access + refresh tokens
 
-### 👤 Users (`/users`)
-> Auth is fully implemented, but frontend integration is planned.
+**Restaurants** (`/restaurants`)
+- `GET /restaurants` – list all (public)
+- `GET /restaurants/:id` – get one (public)
+- `POST /restaurants` – create your restaurant (auth, one per account)
+- `GET /restaurants/me` – your restaurant
+- `PUT /restaurants/me` – update name/description
+- `DELETE /restaurants/me` – delete it, along with its dishes and orders
 
-- `GET /users` – Get all users  
-- `GET /users/:id` – Get user by ID  
-- `POST /users` – Register user  
-- `POST /users/login` – Log in and get token  
+**Dishes** (`/dishes`)
+- `GET /dishes/:restId` – menu for a restaurant (public)
+- `GET /dishes/:restId/:id` – single dish (public)
+- `POST /dishes` – add a dish to your restaurant
+- `DELETE /dishes` – remove a dish from your restaurant
 
----
+**Orders** (`/orders`)
+- `POST /orders` – place an order (public, no account needed)
+- `GET /orders` – your restaurant's orders
+- `POST /orders/simulate` – generate demo orders for your restaurant
 
-## 🔐 Auth
+Anything above marked without "(public)" requires a `Bearer` token from `/users/login`.
 
-- Password hashing & validation  
-- JWT token generation  
-- Auth middleware for route protection  
+## Running locally
 
----
-
-## 🧪 Testing
-
-Unit tests are written for:  
-- Dishes  
-- Orders  
-
-Run tests:
 ```bash
-TEST_DATABASE_URL=postgres://kitchen_user:kitchen_pass@localhost:5432/kitchen_test?sslmode=disable go test ./...
+docker compose up --build
 ```
 
----
-
-## 🐳 Run with Docker
-```bash
-docker-compose down -v # additional
-docker compose up --build # docker-compose up -d
-go run ./..
-```
-
-Docker setup includes:
-- Backend container (Go app)
-- PostgreSQL container with preconfigured user and database
-
-Ensure your `.env` contains:
+This starts the API on `:8080` plus a Postgres container. You'll need a `.env` with:
 
 ```env
+JWT_SECRET=some-random-string
 DATABASE_URL=postgres://kitchen_user:kitchen_pass@db:5432/kitchen_db
 ```
 
----
+`docker-compose.yml` passes `.env` into the container itself, so it never gets baked into the built image.
 
-## 📌 Roadmap
-- [x] Switch to PostgreSQL from SQLite
-- [x] Dockerize the backend
-- [x] Add authorization middleware
-- [x] Implement user authentication
-- [x] Write unit tests
-- [ ] Connect user service to frontend
-- [ ] Add Swagger documentation
-- [ ] Add integration tests
+## Tests
 
----
+```bash
+TEST_DATABASE_URL=postgres://kitchen_user:kitchen_pass@localhost:5432/kitchen_test?sslmode=disable JWT_SECRET=... go test ./...
+```
 
-## 🧑‍💻 Author
+## Deployment
 
-Alexander Pavlov  
-[LinkedIn](https://linkedin.com/in/alexander-pavlov-877a422bb/)
+Set up for Render (`render.yaml`, free tier) with Postgres hosted on Neon rather than Render's own database. `DATABASE_URL` and `JWT_SECRET` are set as environment variables directly in Render — they're intentionally left out of `render.yaml` so nothing sensitive ends up committed.
+
+## Roadmap
+
+- [x] PostgreSQL + Docker
+- [x] JWT auth wired into the routes that actually need it
+- [x] Multi-restaurant support with ownership checks
+- [x] Order analytics + demo data generation
+- [ ] Swagger docs
+- [ ] Integration tests beyond the current handler tests
+
+## Author
+
+Alexander Pavlov
+[LinkedIn](https://linkedin.com/in/pavloveone)
