@@ -1,0 +1,137 @@
+{
+  "root": true,
+  "ignorePatterns": ["build", "node_modules"],
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "airbnb",
+    "airbnb/hooks",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": ["react", "@typescript-eslint", "prettier"],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "import/no-extraneous-dependencies": "off",
+    "import/no-import-module-exports": "off",
+    "import/no-relative-packages": "off",
+    "no-use-before-define": "off",
+    "no-nonoctal-decimal-escape": "off",
+    "class-methods-use-this": "off",
+    "@typescript-eslint/no-use-before-define": [
+      "error",
+      {
+        "functions": false
+      }
+    ],
+    "import/no-unused-modules": "off",
+    "import/extensions": [
+      "error",
+      "never",
+      {
+        "svg": "always",
+        "woff": "always",
+        "style": "always",
+        "json": "always"
+      }
+    ],
+    "import/no-unresolved": "off",
+    "import/prefer-default-export": "off",
+    "import/no-cycle": ["warn"],
+    "no-unused-vars": "off",
+    "no-continue": "off",
+    "no-unused-expressions": "off",
+    "@typescript-eslint/no-unused-expressions": [
+      "error",
+      {
+        "allowShortCircuit": true
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/comma-dangle": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "function-component-definition": "off",
+    "no-console": [
+      "error",
+      {
+        "allow": [
+          "assert",
+          "clear",
+          "count",
+          "countReset",
+          "debug",
+          "dir",
+          "dirxml",
+          "error",
+          "group",
+          "groupCollapsed",
+          "groupEnd",
+          "info",
+          "table",
+          "trace",
+          "warn"
+        ]
+      }
+    ],
+    "no-plusplus": [
+      "error",
+      {
+        "allowForLoopAfterthoughts": true
+      }
+    ],
+    "prefer-destructuring": [
+      "error",
+      {
+        "object": true,
+        "array": false
+      }
+    ],
+    "object-shorthand": ["error"],
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "jsx-a11y/anchor-is-valid": ["warn"],
+    "jsx-a11y/alt-text": "off",
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [".jsx", ".tsx"]
+      }
+    ],
+    "react/jsx-indent": [0, "tab"],
+    "react/prop-types": [0, {}],
+    "react/display-name": "off",
+    "react/require-default-props": "off",
+    "react/jsx-boolean-value": "off",
+    "react/default-props-match-prop-types": "off",
+    "react/function-component-definition": "off",
+    "react/no-unstable-nested-components": [
+      "warn",
+      {
+        "allowAsProps": true
+      }
+    ],
+    "react/jsx-props-no-spreading": "off",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "error"
+  },
+  "overrides": [
+    {
+      "files": ["*.spec.ts", "*.spec.tsx", "*.test.ts", "*.test.tsx"],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
+}
