@@ -1,81 +1,41 @@
-# 🍽️ 2kitchen – Restaurant Ordering Frontend
+# 2kitchen
 
-**Live Demo:** [https://2kitchen-frontend.vercel.app](https://2kitchen-frontend.vercel.app)
+A restaurant ordering app, built as a way to practice a full stack end to end — Go API, React frontend, real JWT auth, an admin panel with actual charts instead of static mockups.
 
-2kitchen is a modern web interface for restaurant ordering. The project allows customers to browse the menu and (in the future) request the bill or call a waiter. For businesses, an admin dashboard is provided to manage dishes, track orders, and view analytics like revenue, order statuses, and most popular items.
+The idea: anyone can register a restaurant and fill it with a menu, and anyone else can browse it and order from it without needing an account. There's a "generate demo orders" button in the admin panel for when you've just set up a restaurant and want to see the analytics tab do something before real orders start coming in.
 
-> ⚠️ Currently only the customer-side dish selection is implemented. Admin features and waiter interactions are planned in future versions.
+## What's here
 
----
+- Browse restaurants, open one, order from its menu — no account needed
+- Sign up, then register your own restaurant from the admin panel
+- Admin panel: add/remove dishes, see incoming orders, revenue and order-status charts, edit or delete the restaurant
+- Ownership is enforced on the backend, not just hidden in the UI — logging in as one restaurant owner and trying to edit another's menu just doesn't work
 
-## ✨ Features
+## Stack
 
-- Responsive menu interface (mobile to desktop)
-- Dish browsing and selection
-- Admin dashboard (planned):
-  - Manage dishes (add/edit/delete)
-  - Track orders by day
-  - View visual analytics (charts and graphs)
-    - Revenue by day
-    - Orders by status
-    - Top-5 dishes
-    - Average check size
-- Modular component structure (planned UI-kit)
-- Smooth adaptive styling for all screen sizes
+React, TypeScript, MUI, Zustand, Recharts, Axios
 
----
-
-## 🛠 Tech Stack
-
-- **Frontend:** React + TypeScript
-- **Styling:** Styled Components
-- **State Management:** Zustand
-- **Deployment:** Vercel
-
----
-
-## 📸 Screenshots
-
-1. **Mobile View** responsive layout with vertical menu
-2. **Desktop View** grid of dishes and side-by-side cart
-3. **Combined View** dishes panel with active cart state
-4. **Admin Dashboard Analytics** charts and revenue stats
-
-![Mobile view](screenshots/mobile.png)
-![Desktop view](screenshots/desktop.png)
-![Dishes and cart](screenshots/dishes_and_cart.png)
-![Admin analytics](screenshots/admin_analytics.png)
-
----
-
-## 🚀 Getting Started Locally
-
-Clone the repo and run the app locally:
+## Running locally
 
 ```bash
 git clone https://github.com/pavloveone/2kitchen_frontend.git
 cd 2kitchen_frontend
 npm install
-npm run start
+npm start
 ```
 
-> No `.env` file required at this stage. Runs on port `3000` by default.
+Needs the backend running on `:8080` (see [2kitchen_backend](https://github.com/pavloveone/2kitchen_backend)), or set `REACT_APP_API_URL` if it's running somewhere else.
 
----
+## Roadmap
 
-## 📌 Roadmap
+- [x] Restaurant registration + JWT auth
+- [x] Admin panel: dishes, orders, analytics, restaurant settings
+- [x] Demo order generation for empty restaurants
+- [ ] Waiter call + bill request
+- [ ] E2E tests
+- [ ] Custom UI kit instead of stock MUI components
 
-- [ ] Add frontend authentication (login/signup with session or token)
-- [ ] Create design system / custom UI-kit
-- [x] Add cart functionality + order confirmation
-- [ ] Implement waiter call + request bill
-- [x] Connect to backend API for dish/analytics data
-- [ ] Add E2E tests (Playwright or Cypress)
-- [ ] Add localization
+## Author
 
----
-
-## 🧑‍💻 Author
-
-Alexander Pavlov  
-[LinkedIn](https://linkedin.com/in/alexander-pavlov-877a422bb/)
+Alexander Pavlov
+[LinkedIn](https://linkedin.com/in/pavloveone)
