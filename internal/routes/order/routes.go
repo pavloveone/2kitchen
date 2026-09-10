@@ -1,7 +1,7 @@
 package orderroutes
 
 import (
-	_ "2kitchen/internal/auth"
+	"2kitchen/internal/auth"
 	orderhandler "2kitchen/internal/handlers/order"
 
 	"github.com/gofiber/fiber/v2"
@@ -9,6 +9,7 @@ import (
 
 func SetupOrderRoutes(app *fiber.App, h *orderhandler.OrderHandler) {
 	ordersGroup := app.Group("/orders")
-	ordersGroup.Get("", h.AllOrders)
+	ordersGroup.Get("", auth.AuthMiddleware, h.MyRestaurantOrders)
 	ordersGroup.Post("", h.CreateOrder)
+	ordersGroup.Post("/simulate", auth.AuthMiddleware, h.SimulateOrders)
 }

@@ -17,8 +17,8 @@ type DishRepository struct {
 func NewDishRepository(ctx context.Context, db *pgxpool.Pool) (*DishRepository, error) {
 	createTableQuery := `
 	CREATE TABLE IF NOT EXISTS dishes (
-		id SERIAL PRIMARY KEY, 
-		restaurant INTEGER,
+		id SERIAL PRIMARY KEY,
+		restaurant_id INTEGER NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
 		name TEXT,
 		description TEXT,
 		price DOUBLE PRECISION,
@@ -38,7 +38,7 @@ func NewDishRepository(ctx context.Context, db *pgxpool.Pool) (*DishRepository, 
 }
 
 func (r *DishRepository) AllDishes(ctx context.Context) ([]models.Dish, error) {
-	query := `SELECT id, restaurant, name, description, price, image, protein, fat, carbs, calories FROM dishes`
+	query := `SELECT id, restaurant_id, name, description, price, image, protein, fat, carbs, calories FROM dishes`
 	rows, err := r.db.Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (r *DishRepository) AllDishes(ctx context.Context) ([]models.Dish, error) {
 }
 
 func (r *DishRepository) RestaurantDishes(ctx context.Context, restId int) ([]models.Dish, error) {
-	query := `SELECT id, restaurant, name, description, price, image, protein, fat, carbs, calories FROM dishes WHERE restaurant = $1`
+	query := `SELECT id, restaurant_id, name, description, price, image, protein, fat, carbs, calories FROM dishes WHERE restaurant_id = $1`
 	rows, err := r.db.Query(ctx, query, restId)
 	if err != nil {
 		fmt.Println("Error executing query:", err)
@@ -89,7 +89,7 @@ func (r *DishRepository) RestaurantDishes(ctx context.Context, restId int) ([]mo
 }
 
 func (r *DishRepository) DishById(ctx context.Context, restId, dishId int) (models.Dish, error) {
-	query := "SELECT id, restaurant, name, description, price, image, protein, fat, carbs, calories FROM dishes WHERE restaurant = $1 AND id = $2"
+	query := "SELECT id, restaurant_id, name, description, price, image, protein, fat, carbs, calories FROM dishes WHERE restaurant_id = $1 AND id = $2"
 	row := r.db.QueryRow(ctx, query, restId, dishId)
 
 	var dish models.Dish
@@ -106,7 +106,7 @@ func (r *DishRepository) DishById(ctx context.Context, restId, dishId int) (mode
 
 func (r *DishRepository) AddDish(ctx context.Context, newDish models.ModificationDish) (int, error) {
 	query := `
-		INSERT INTO dishes (restaurant, name, description, price, image, protein, fat, carbs, calories)
+		INSERT INTO dishes (restaurant_id, name, description, price, image, protein, fat, carbs, calories)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		RETURNING id
 	`
@@ -132,7 +132,7 @@ func (r *DishRepository) AddDish(ctx context.Context, newDish models.Modificatio
 }
 
 func (r *DishRepository) RemoveDish(ctx context.Context, dish models.ModificationDish) error {
-	query := "DELETE FROM dishes WHERE restaurant = $1 AND id = $2"
+	query := "DELETE FROM dishes WHERE restaurant_id = $1 AND id = $2"
 
 	_, err := r.db.Exec(ctx, query, dish.Restaurant, dish.ID)
 	if err != nil {

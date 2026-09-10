@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -17,7 +18,7 @@ func NewOrderRepository(ctx context.Context, db *pgxpool.Pool) (*OrderRepository
 	createTableQuery := `
 		CREATE TABLE IF NOT EXISTS orders (
 		id SERIAL PRIMARY KEY,
-		restaurant INTEGER NOT NULL,
+		restaurant_id INTEGER NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
 		items JSONB NOT NULL,
 		order_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 		status TEXT DEFAULT 'pending',
@@ -32,9 +33,9 @@ func NewOrderRepository(ctx context.Context, db *pgxpool.Pool) (*OrderRepository
 	return &OrderRepository{db: db}, nil
 }
 
-func (r *OrderRepository) AllOrders(ctx context.Context) ([]models.Order, error) {
-	query := `SELECT id, restaurant, items, status, order_time, payment_status FROM orders`
-	rows, err := r.db.Query(ctx, query)
+func (r *OrderRepository) RestaurantOrders(ctx context.Context, restId int) ([]models.Order, error) {
+	query := `SELECT id, restaurant_id, items, status, order_time, payment_status FROM orders WHERE restaurant_id = $1 ORDER BY order_time DESC`
+	rows, err := r.db.Query(ctx, query, restId)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +63,7 @@ func (r *OrderRepository) CreateOrder(ctx context.Context, order models.CreateOr
 		log.Fatal(err)
 	}
 	query := `
-		INSERT INTO orders (restaurant, items)
+		INSERT INTO orders (restaurant_id, items)
 		VALUES ($1, $2)
 		RETURNING id
 	`
@@ -73,4 +74,17 @@ func (r *OrderRepository) CreateOrder(ctx context.Context, order models.CreateOr
 	}
 
 	return id, nil
+}
+
+func (r *OrderRepository) CreateSimulatedOrder(ctx context.Context, restId int, items []models.OrderItem, status, paymentStatus string, orderTime time.Time) error {
+	itemsJSON, err := json.Marshal(items)
+	if err != nil {
+		return err
+	}
+	query := `
+		INSERT INTO orders (restaurant_id, items, status, payment_status, order_time)
+		VALUES ($1, $2, $3, $4, $5)
+	`
+	_, err = r.db.Exec(ctx, query, restId, string(itemsJSON), status, paymentStatus, orderTime)
+	return err
 }

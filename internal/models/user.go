@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type User struct {
 	ID         int
 	Username   string
@@ -8,7 +10,7 @@ type User struct {
 	LastName   string
 	MiddleName string
 	Email      string
-	CreatedOn  string
+	CreatedOn  time.Time
 }
 
 type CreateUserRequest struct {
@@ -21,13 +23,13 @@ type CreateUserRequest struct {
 }
 
 type UserResponse struct {
-	ID         int    `json:"id"`
-	Username   string `json:"username"`
-	FirstName  string `json:"firstName"`
-	LastName   string `json:"lastName"`
-	MiddleName string `json:"middleName,omitempty"`
-	Email      string `json:"email"`
-	CreatedOn  string `json:"createdOn"`
+	ID         int       `json:"id"`
+	Username   string    `json:"username"`
+	FirstName  string    `json:"firstName"`
+	LastName   string    `json:"lastName"`
+	MiddleName string    `json:"middleName,omitempty"`
+	Email      string    `json:"email"`
+	CreatedOn  time.Time `json:"createdOn"`
 }
 
 type LogInUser struct {
