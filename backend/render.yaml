@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: 2kitchen-backend
+    env: go
+    region: frankfurt
+    plan: free
+    buildCommand: go build -o main ./cmd
+    startCommand: ./main
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
