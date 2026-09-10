@@ -1,6 +1,7 @@
 # 2kitchen
 
 [![Frontend](https://img.shields.io/website?url=https%3A%2F%2F2kitchen.vercel.app&label=frontend)](https://2kitchen.vercel.app)
+[![Backend](https://img.shields.io/badge/backend-Render-46E3B7?logo=render&logoColor=white)](https://twokitchen-backend.onrender.com/restaurants)
 
 **Live:** [2kitchen.vercel.app](https://2kitchen.vercel.app)
 

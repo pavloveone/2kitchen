@@ -45,7 +45,7 @@ export const RestaurantList: FC = () => {
 
       {!isLoadingRestaurants && restaurants.length === 0 && (
         <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-          No restaurants registered yet — be the first
+          No restaurants registered yet - be the first
         </Typography>
       )}
 

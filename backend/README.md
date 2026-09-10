@@ -1,5 +1,8 @@
 # 2kitchen backend
 
+[![Backend](https://img.shields.io/badge/backend-Render-46E3B7?logo=render&logoColor=white)](https://twokitchen-backend.onrender.com/restaurants)
+[![Go](https://img.shields.io/badge/go-1.23-00ADD8?logo=go&logoColor=white)](go.mod)
+
 **Live:** [twokitchen-backend.onrender.com](https://twokitchen-backend.onrender.com/restaurants)
 
 Backend for 2kitchen, a small multi-tenant restaurant ordering app. Anyone can sign up, register their own restaurant, fill it with dishes, and get an admin panel with order stats. Customers browse restaurants and place orders without needing an account.
