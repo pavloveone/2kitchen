@@ -1,5 +1,11 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
+let authToken: string | null = null;
+
+export const setAuthToken = (token: string | null) => {
+  authToken = token;
+};
+
 export class apiClient {
   private client: AxiosInstance;
 
@@ -9,6 +15,13 @@ export class apiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+    });
+
+    this.client.interceptors.request.use((config) => {
+      if (authToken) {
+        config.headers.set('Authorization', `Bearer ${authToken}`);
+      }
+      return config;
     });
   }
 

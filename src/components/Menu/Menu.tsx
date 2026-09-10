@@ -1,5 +1,5 @@
 import { FC, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { HeaderMenu } from './HeaderMenu';
 import { useViewModeStore } from '../../store';
@@ -10,19 +10,21 @@ export const Menu: FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const restaurantId = Number(id);
 
   const { viewMode } = useViewModeStore();
 
   const handleCheckout = useCallback(() => {
-    navigate(`/checkout`);
-  }, [navigate]);
+    navigate(`/restaurant/${id}/checkout`);
+  }, [navigate, id]);
 
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
+        height: '100%',
         bgcolor: 'background.default',
         '& ::-webkit-scrollbar': {
           width: '6px',
@@ -49,7 +51,7 @@ export const Menu: FC = () => {
           flexDirection: isMobile ? 'column' : 'row',
         }}
       >
-        <Dishes viewMode={viewMode} isMobile={isMobile} />
+        <Dishes viewMode={viewMode} isMobile={isMobile} restaurantId={restaurantId} />
         <Cart isMobile={isMobile} onCheckout={handleCheckout} />
       </Box>
     </Box>

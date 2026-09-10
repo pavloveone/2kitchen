@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { Stack, useTheme, useMediaQuery } from '@mui/material';
 import { NotificationsNoneOutlined, MenuBook, Calculate } from '@mui/icons-material';
 import { ILinkButtonProps, LinkButton } from '../Button';
@@ -6,34 +7,35 @@ import { ILinkButtonProps, LinkButton } from '../Button';
 export const Start = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { id } = useParams<{ id: string }>();
 
   const buttons = useMemo<ILinkButtonProps[]>(
     () => [
       {
-        path: '/waiter',
+        path: `/restaurant/${id}/waiter`,
         icon: <NotificationsNoneOutlined />,
         variant: 'outlined',
-        title: 'Официант',
+        title: 'Waiter',
         isMobile,
         disabled: true,
       },
       {
-        path: '/menu',
+        path: `/restaurant/${id}/menu`,
         icon: <MenuBook />,
         variant: 'outlined',
-        title: 'Меню',
+        title: 'Menu',
         isMobile,
       },
       {
-        path: '/calculate',
+        path: `/restaurant/${id}/calculate`,
         icon: <Calculate />,
         variant: 'outlined',
-        title: 'Рассчитать',
+        title: 'Bill',
         isMobile,
         disabled: true,
       },
     ],
-    [isMobile],
+    [id, isMobile],
   );
 
   return (

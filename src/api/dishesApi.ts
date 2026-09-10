@@ -22,7 +22,6 @@ export interface ModificationDish {
   fat: number;
   carbs: number;
   calories: number;
-  restaurant: number;
 }
 
 export class DishesApi extends apiClient {
@@ -31,23 +30,15 @@ export class DishesApi extends apiClient {
     super(baseUrl);
   }
 
-  public getAll = async () => {
-    return this.get<Dish[]>(`/1`);
-  };
-
-  public getById = async (id: number) => {
-    return this.get<Dish>(`/${id}`);
+  public getByRestaurant = async (restaurantId: number) => {
+    return this.get<Dish[]>(`/${restaurantId}`);
   };
 
   public create = async (dish: ModificationDish) => {
     return this.post<void>(``, dish);
   };
 
-  public update = async (id: number, dish: ModificationDish) => {
-    return this.put<Dish>(`/${id}`, dish);
-  };
-
   public remove = async (id: number) => {
-    return this.delete<void>(`/${id}`);
+    return this.delete<void>(``, { data: { id } });
   };
 }

@@ -1,6 +1,5 @@
-import { FC, useCallback, useEffect } from 'react';
+import { FC } from 'react';
 import { Box } from '@mui/material';
-import { useOrderStore } from '../../../store';
 import { OrdersTable } from './Table';
 import { Order } from '../../../api';
 

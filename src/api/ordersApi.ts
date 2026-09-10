@@ -26,11 +26,15 @@ export class OrdersApi extends apiClient {
     super(baseUrl);
   }
 
-  public getAll = async () => {
-    return this.get<Order[]>(`/`);
+  public getMine = async () => {
+    return this.get<Order[]>(``);
   };
 
   public create = async (order: CreateOrder) => {
     return this.post<void>(``, order);
+  };
+
+  public simulate = async () => {
+    return this.post<void>(`/simulate`, {});
   };
 }

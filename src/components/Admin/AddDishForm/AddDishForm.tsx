@@ -10,14 +10,15 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
-import { useDishStore } from '../../../store';
+import { useDishStore, useToastStore } from '../../../store';
 
 interface AddDishFormProps {
   open: boolean;
   onClose: () => void;
+  restaurantId: number;
 }
 
-export const AddDishForm: FC<AddDishFormProps> = ({ open, onClose }) => {
+export const AddDishForm: FC<AddDishFormProps> = ({ open, onClose, restaurantId }) => {
   const [form, setForm] = useState({
     name: '',
     description: '',
@@ -32,6 +33,22 @@ export const AddDishForm: FC<AddDishFormProps> = ({ open, onClose }) => {
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
 
   const { addDish } = useDishStore();
+  const { showToast } = useToastStore();
+
+  const validate = (formToValidate: typeof form) => {
+    const newErrors: { [key: string]: boolean } = {};
+    Object.entries(formToValidate).forEach(([key, value]) => {
+      if (!value.trim()) {
+        newErrors[key] = true;
+      } else if (
+        ['price', 'protein', 'fat', 'carbs', 'calories'].includes(key) &&
+        Number.isNaN(Number(value))
+      ) {
+        newErrors[key] = true;
+      }
+    });
+    setErrors(newErrors);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -45,56 +62,42 @@ export const AddDishForm: FC<AddDishFormProps> = ({ open, onClose }) => {
     });
   };
 
-  const validate = (formToValidate: typeof form) => {
-    const newErrors: { [key: string]: boolean } = {};
-    Object.entries(formToValidate).forEach(([key, value]) => {
-      if (!value.trim()) {
-        newErrors[key] = true;
-      } else if (
-        ['price', 'protein', 'fat', 'carbs', 'calories'].includes(key) &&
-        isNaN(Number(value))
-      ) {
-        newErrors[key] = true;
-      }
-    });
-    setErrors(newErrors);
-  };
-
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (Object.keys(errors).length > 0) return;
+
+      const newDish = {
+        ...form,
+        price: parseFloat(form.price),
+        protein: parseFloat(form.protein),
+        fat: parseFloat(form.fat),
+        carbs: parseFloat(form.carbs),
+        calories: parseFloat(form.calories),
+      };
+
       try {
-        e.preventDefault();
-        if (Object.keys(errors).length > 0) return;
-
-        const newDish = {
-          ...form,
-          price: parseFloat(form.price),
-          protein: parseFloat(form.protein),
-          fat: parseFloat(form.fat),
-          carbs: parseFloat(form.carbs),
-          calories: parseFloat(form.calories),
-          restaurant: 1,
-        };
-
-        await addDish(newDish);
+        await addDish(newDish, restaurantId);
       } catch (error) {
         console.error('Error while add dish to rest', error);
-      } finally {
-        setForm({
-          name: '',
-          description: '',
-          price: '',
-          image: '',
-          protein: '',
-          fat: '',
-          carbs: '',
-          calories: '',
-        });
-        setErrors({});
-        onClose();
+        showToast('Could not add the dish. Please try again');
+        return;
       }
+
+      setForm({
+        name: '',
+        description: '',
+        price: '',
+        image: '',
+        protein: '',
+        fat: '',
+        carbs: '',
+        calories: '',
+      });
+      setErrors({});
+      onClose();
     },
-    [addDish, errors, form, onClose],
+    [addDish, errors, form, onClose, restaurantId, showToast],
   );
 
   const isFormValid =
@@ -102,7 +105,7 @@ export const AddDishForm: FC<AddDishFormProps> = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Добавить блюдо</DialogTitle>
+      <DialogTitle>Add dish</DialogTitle>
       <DialogContent>
         <Box
           component="form"
@@ -122,14 +125,20 @@ export const AddDishForm: FC<AddDishFormProps> = ({ open, onClose }) => {
           >
             <Stack spacing={3}>
               {[
-                { label: 'Название', name: 'name', type: 'text' },
-                { label: 'Описание', name: 'description', type: 'text', multiline: true, rows: 3 },
-                { label: 'Цена', name: 'price', type: 'number' },
-                { label: 'URL изображения', name: 'image', type: 'text' },
-                { label: 'Белки (г)', name: 'protein', type: 'number' },
-                { label: 'Жиры (г)', name: 'fat', type: 'number' },
-                { label: 'Углеводы (г)', name: 'carbs', type: 'number' },
-                { label: 'Калории (ккал)', name: 'calories', type: 'number' },
+                { label: 'Name', name: 'name', type: 'text' },
+                {
+                  label: 'Description',
+                  name: 'description',
+                  type: 'text',
+                  multiline: true,
+                  rows: 3,
+                },
+                { label: 'Price', name: 'price', type: 'number' },
+                { label: 'Image URL', name: 'image', type: 'text' },
+                { label: 'Protein (g)', name: 'protein', type: 'number' },
+                { label: 'Fat (g)', name: 'fat', type: 'number' },
+                { label: 'Carbs (g)', name: 'carbs', type: 'number' },
+                { label: 'Calories (kcal)', name: 'calories', type: 'number' },
               ].map(({ label, name, type, multiline, rows }) => (
                 <Box key={name} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="body1" sx={{ width: 250, alignSelf: 'center' }}>
@@ -161,7 +170,7 @@ export const AddDishForm: FC<AddDishFormProps> = ({ open, onClose }) => {
           sx={{ borderRadius: 2, width: '100%' }}
           disabled={!isFormValid}
         >
-          Добавить блюдо
+          Add dish
         </Button>
       </DialogActions>
     </Dialog>

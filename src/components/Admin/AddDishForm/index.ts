@@ -1,1 +1,1 @@
-export * from './AddDIshForm';
+export * from './AddDishForm';
