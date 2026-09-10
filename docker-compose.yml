@@ -9,6 +9,8 @@ services:
       - db
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgres://kitchen_user:kitchen_pass@db:5432/kitchen_db
 

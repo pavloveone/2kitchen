@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 RUN apk add --no-cache git
 
@@ -11,12 +11,11 @@ COPY . .
 
 RUN go build -o 2kitchen ./cmd/main.go
 
-FROM alpine:3.18
+FROM alpine:3.21
 
 RUN apk add --no-cache ca-certificates
 
 COPY --from=builder /app/2kitchen /2kitchen
-COPY --from=builder /app/.env /.env
 
 EXPOSE 8080
 

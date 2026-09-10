@@ -4,25 +4,25 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var jwtKey []byte
 
 func init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	_ = godotenv.Load()
+
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
-		log.Fatal("JWT_SECRET is not set in .env")
+		log.Fatal("JWT_SECRET is not set")
 	}
 	jwtKey = []byte(secret)
 }
@@ -65,6 +65,7 @@ func GenerateTokens(userId int) (string, string, error) {
 func AuthMiddleware(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
 	if authHeader == "" {
+		logrus.WithField("path", c.Path()).Warn("request missing Authorization header")
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
@@ -73,15 +74,25 @@ func AuthMiddleware(c *fiber.Ctx) error {
 	claims, err := validateToken(tokenStr)
 
 	if err != nil {
+		logrus.WithError(err).WithField("path", c.Path()).Warn("invalid or expired token")
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 	userId, ok := (*claims)["user_id"].(string)
 	if !ok {
+		logrus.WithField("path", c.Path()).Warn("token missing user_id claim")
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 	c.Locals("user", userId)
 
 	return c.Next()
+}
+
+func UserIDFromContext(c *fiber.Ctx) (int, error) {
+	userIdStr, ok := c.Locals("user").(string)
+	if !ok {
+		return 0, fmt.Errorf("missing authenticated user")
+	}
+	return strconv.Atoi(userIdStr)
 }
 
 func validateToken(tokenStr string) (*jwt.MapClaims, error) {
